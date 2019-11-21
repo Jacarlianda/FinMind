@@ -1,5 +1,3 @@
-
-
 def trade(
         user_funds,
         user_stock,

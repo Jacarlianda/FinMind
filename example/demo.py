@@ -1,6 +1,4 @@
-
-
-from FinMind.Data import Load
+from Data import Load
 import datetime
 
 date = str( datetime.datetime.now().date() - datetime.timedelta(30) )

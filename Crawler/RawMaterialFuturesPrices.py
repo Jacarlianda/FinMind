@@ -1,4 +1,3 @@
-
 TABLE = 'RawMaterialFuturesPrices'
 
 import os

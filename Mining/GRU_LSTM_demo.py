@@ -1,8 +1,5 @@
-
-
-from FinMind.Data import Load
-import numpy as np 
-#import pandas as pd
+from Data import Load
+import numpy as np
 from keras.layers.core import Dense, Dropout
 from keras.layers import LSTM , GRU
 from keras.models import Sequential

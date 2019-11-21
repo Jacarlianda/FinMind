@@ -1,6 +1,4 @@
-
 import pandas as pd
-import numpy as np
 import requests
 
 # class name，必須跟檔案名一致，例如 class MAXMINPERIODBAIS，檔名也是 MAXMINPERIODBAIS.py

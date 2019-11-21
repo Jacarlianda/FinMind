@@ -1,9 +1,5 @@
-
-
 import pandas as pd
 import numpy as np
-import requests
-from FinMind.Data import Load
 
 def MoveAverage(stock_price,days = 5,variable = 'close'):
     # variable = 'close'

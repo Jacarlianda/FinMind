@@ -2,3 +2,6 @@ keras
 numpy
 matplotlib
 requests
+pandas
+sklearn
+lxml

@@ -1,5 +1,3 @@
-
-
 import warnings
 warnings.filterwarnings("ignore")
 import numpy as np
@@ -8,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import dateutil.relativedelta
 import requests
-from FinMind.BackTesting import selenium
+from BackTesting import selenium
 
 url = 'http://finmindapi.servebeer.com/api/data'
 

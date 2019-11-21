@@ -1,9 +1,8 @@
-
 '''
 example of loading FinMind api
 '''
 
-from FinMind.Data import Load
+from Data import Load
 import requests
 import pandas as pd
 url = 'http://finmindapi.servebeer.com/api/data'
