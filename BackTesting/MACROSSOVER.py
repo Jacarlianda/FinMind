@@ -1,12 +1,13 @@
 import pandas as pd
 import requests
 
+
 # class name，必須跟檔案名一致，例如 class MACROSSOVER，檔名也是 MACROSSOVER.py
 class MACROSSOVER:
     def __init__(self,
                  stock_price,
-                 **kwargs,):
-        #-------------------------------------------------------------------
+                 **kwargs, ):
+        # -------------------------------------------------------------------
         # 此區塊請勿更動
         stock_price = stock_price.sort_values('date')
         # 股價
@@ -18,7 +19,7 @@ class MACROSSOVER:
         # 外資持股
         self.Shareholding = kwargs.get("Shareholding", pd.DataFrame())
         # 此區塊請勿更動
-        #-------------------------------------------------------------------
+        # -------------------------------------------------------------------
         self.create_feature()
 
     def create_feature(self):
@@ -31,11 +32,11 @@ class MACROSSOVER:
         self.stock_price = self.stock_price.dropna()
 
         self.stock_price['signal_shift1'] = self.stock_price['signal_shift1'].astype(int)
-        colname = ['date','signal','signal_shift1']
+        colname = ['date', 'signal', 'signal_shift1']
         self.stock_price = self.stock_price[colname]
         self.stock_price.index = range(len(self.stock_price))
 
-    def trade(self,date):
+    def trade(self, date):
         '''
         此區塊，可進行資料處理、做技術指標，寫自己的策略，
         寫你自己的策略, 必須 return : 1 (買) or -1 (賣) or 0 (不操作)
@@ -44,7 +45,7 @@ class MACROSSOVER:
         date : 昨天時間
         用昨天的資料，計算技術指標，判斷今天買/賣
         '''
-        value = self.stock_price[ self.stock_price['date'] == date ]
+        value = self.stock_price[self.stock_price['date'] == date]
         if len(value) == 0:
             return 0
 
@@ -58,17 +59,17 @@ class MACROSSOVER:
         else:
             return 0
 
-def test():
 
+def test():
     stock_id = '0056'
     date = '2015-01-01'
 
     url = 'http://finmindapi.servebeer.com/api/data'
-    form_data = {'dataset':'TaiwanStockPrice',
-                 'stock_id':stock_id,
-                 'date':date}
+    form_data = {'dataset': 'TaiwanStockPrice',
+                 'stock_id': stock_id,
+                 'date': date}
 
-    res = requests.post(url,verify = True,data = form_data)
+    res = requests.post(url, verify=True, data=form_data)
 
     temp = res.json()
     stock_price = pd.DataFrame(temp['data'])

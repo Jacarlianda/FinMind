@@ -1,16 +1,17 @@
 import pandas as pd
 import requests
 
+
 # class name，必須跟檔案名一致，例如 class MAXMINPERIODBAIS，檔名也是 MAXMINPERIODBAIS.py
 class MAXMINPERIODBAIS:
     def __init__(self,
                  stock_price,
-                 ma_days = 20,
-                 bais_lower = -1.1,
-                 bais_upper = 1.25,
-                 period_days = 5,
-                 **kwargs,):
-        #-------------------------------------------------------------------
+                 ma_days=20,
+                 bais_lower=-1.1,
+                 bais_upper=1.25,
+                 period_days=5,
+                 **kwargs, ):
+        # -------------------------------------------------------------------
         # 此區塊請勿更動
         stock_price = stock_price.sort_values('date')
         # 股價
@@ -22,7 +23,7 @@ class MAXMINPERIODBAIS:
         # 外資持股
         self.Shareholding = kwargs.get("Shareholding", pd.DataFrame())
         # 此區塊請勿更動
-        #-------------------------------------------------------------------
+        # -------------------------------------------------------------------
         self.ma_days = ma_days
         self.bais_lower = bais_lower
         self.bais_upper = bais_upper
@@ -32,15 +33,18 @@ class MAXMINPERIODBAIS:
 
     def create_feature(self):
         self.stock_price['ma{}'.format(self.ma_days)] = self.stock_price['close'].rolling(window=self.ma_days).mean()
-        self.stock_price['bais'] = ((self.stock_price['close'] - self.stock_price['ma{}'.format(self.ma_days)]) / self.stock_price['ma{}'.format(self.ma_days)]) * 100
+        self.stock_price['bais'] = ((self.stock_price['close'] - self.stock_price['ma{}'.format(self.ma_days)]) /
+                                    self.stock_price['ma{}'.format(self.ma_days)]) * 100
 
-        self.stock_price['max_period{}'.format(self.period_days)] = self.stock_price['close'].shift(1).rolling(window=self.period_days).max()
-        self.stock_price['min_period{}'.format(self.period_days)] = self.stock_price['close'].shift(1).rolling(window=self.period_days).min()
+        self.stock_price['max_period{}'.format(self.period_days)] = self.stock_price['close'].shift(1).rolling(
+            window=self.period_days).max()
+        self.stock_price['min_period{}'.format(self.period_days)] = self.stock_price['close'].shift(1).rolling(
+            window=self.period_days).min()
 
         self.stock_price = self.stock_price.dropna()
         self.stock_price.index = range(len(self.stock_price))
 
-    def trade(self,date):
+    def trade(self, date):
         '''
         此區塊，可進行資料處理、做技術指標，寫自己的策略，
         寫你自己的策略, 必須 return : 1 (買) or -1 (賣) or 0 (不操作)
@@ -49,7 +53,7 @@ class MAXMINPERIODBAIS:
         date : 昨天時間
         用昨天的資料，計算技術指標，判斷今天買/賣
         '''
-        value = self.stock_price[ self.stock_price['date'] == date ]
+        value = self.stock_price[self.stock_price['date'] == date]
         if len(value) == 0:
             return 0
 
@@ -65,27 +69,27 @@ class MAXMINPERIODBAIS:
         else:
             return 0
 
-def test():
 
+def test():
     stock_id = '0056'
     date = '2015-01-01'
 
     url = 'http://finmindapi.servebeer.com/api/data'
-    form_data = {'dataset':'TaiwanStockPrice',
-                 'stock_id':stock_id,
-                 'date':date}
+    form_data = {'dataset': 'TaiwanStockPrice',
+                 'stock_id': stock_id,
+                 'date': date}
 
-    res = requests.post(url,verify = True,data = form_data)
+    res = requests.post(url, verify=True, data=form_data)
 
     temp = res.json()
     stock_price = pd.DataFrame(temp['data'])
 
-    form_data = {'dataset':'InstitutionalInvestorsBuySell',
-  	   'stock_id':stock_id,
-  	   'date':date}
+    form_data = {'dataset': 'InstitutionalInvestorsBuySell',
+                 'stock_id': stock_id,
+                 'date': date}
     res = requests.post(
-        url,verify = True,
-        data = form_data)
+        url, verify=True,
+        data=form_data)
 
     temp = res.json()
     InstitutionalInvestorsBuySell = pd.DataFrame(temp['data'])
@@ -95,4 +99,3 @@ def test():
         InstitutionalInvestorsBuySell=InstitutionalInvestorsBuySell
     )
     obj.trade('2019-05-07')
-

@@ -1,13 +1,13 @@
-
 import pandas as pd
 import requests
+
 
 # class name，必須跟檔案名一致，例如 class BAIS，檔名也是 BAIS.py
 class BAIS:
     def __init__(self,
                  stock_price,
-                 **kwargs,):
-        #-------------------------------------------------------------------    
+                 **kwargs, ):
+        # -------------------------------------------------------------------
         # 此區塊請勿更動
         stock_price = stock_price.sort_values('date')
         # 股價
@@ -19,12 +19,12 @@ class BAIS:
         # 外資持股
         self.Shareholding = kwargs.get("Shareholding", pd.DataFrame())
         # 此區塊請勿更動
-        #-------------------------------------------------------------------
+        # -------------------------------------------------------------------
         self.ma_days = 24
         self.bais_lower = -7
         self.bais_upper = 8
-        self.create_feature()# 建立自己的 feature or 技術指標
-    
+        self.create_feature()  # 建立自己的 feature or 技術指標
+
     def create_feature(self):
         self.stock_price['ma{}'.format(self.ma_days)] = self.stock_price['close'].rolling(window=self.ma_days).mean()
         self.stock_price['bais'] = \
@@ -34,7 +34,7 @@ class BAIS:
         self.stock_price = self.stock_price.dropna()
         self.stock_price.index = range(len(self.stock_price))
 
-    def trade(self,date):
+    def trade(self, date):
         ''' 
         此區塊，可進行資料處理、做技術指標，寫自己的策略，
         寫你自己的策略, 必須 return : 1 (買) or -1 (賣) or 0 (不操作)
@@ -44,7 +44,7 @@ class BAIS:
         用昨天的資料，計算技術指標，判斷今天買/賣
         '''
         # example
-        value = self.stock_price[ self.stock_price['date'] == date ]
+        value = self.stock_price[self.stock_price['date'] == date]
         if len(value) == 0:
             return 0
 
@@ -57,16 +57,16 @@ class BAIS:
         else:
             return 0
 
+
 def test():
-    
-    form_data = {'dataset':'TaiwanStockPrice',
-                 'stock_id':'2317',
-                 'date':'2019-01-01'}
+    form_data = {'dataset': 'TaiwanStockPrice',
+                 'stock_id': '2317',
+                 'date': '2019-01-01'}
     url = 'http://finmindapi.servebeer.com/api/data'
     res = requests.post(
-            url,verify = True,
-            data = form_data)
-    
+        url, verify=True,
+        data=form_data)
+
     temp = res.json()
     stock_price = pd.DataFrame(temp['data'])
 
@@ -75,5 +75,3 @@ def test():
     self.trade(date)
     self.trade('2019-05-07')
     self.trade('2019-05-11')
-    
-   

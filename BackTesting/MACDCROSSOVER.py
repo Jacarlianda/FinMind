@@ -1,12 +1,13 @@
 import pandas as pd
 import requests
 
+
 # class name，必須跟檔案名一致，例如 class MACDCROSSOVER，檔名也是 MACDCROSSOVER.py
 class MACDCROSSOVER:
     def __init__(self,
                  stock_price,
-                 **kwargs,):
-        #-------------------------------------------------------------------
+                 **kwargs, ):
+        # -------------------------------------------------------------------
         # 此區塊請勿更動
         stock_price = stock_price.sort_values('date')
         # 股價
@@ -18,15 +19,18 @@ class MACDCROSSOVER:
         # 外資持股
         self.Shareholding = kwargs.get("Shareholding", pd.DataFrame())
         # 此區塊請勿更動
-        #-------------------------------------------------------------------
+        # -------------------------------------------------------------------
         self.create_feature()
 
     def create_feature(self):
-        self.stock_price['ema12'] = self.stock_price['close'].ewm(span=12,min_periods=0,adjust=False,ignore_na=False).mean()
-        self.stock_price['ema26'] = self.stock_price['close'].ewm(span=26,min_periods=0,adjust=False,ignore_na=False).mean()
+        self.stock_price['ema12'] = self.stock_price['close'].ewm(span=12, min_periods=0, adjust=False,
+                                                                  ignore_na=False).mean()
+        self.stock_price['ema26'] = self.stock_price['close'].ewm(span=26, min_periods=0, adjust=False,
+                                                                  ignore_na=False).mean()
 
-        self.stock_price['dif'] = self.stock_price['ema12'] - self.stock_price['ema26'] # 快速線
-        self.stock_price['macd'] = self.stock_price['dif'].ewm(span=9,min_periods=0,adjust=False,ignore_na=False).mean() # 慢速線
+        self.stock_price['dif'] = self.stock_price['ema12'] - self.stock_price['ema26']  # 快速線
+        self.stock_price['macd'] = self.stock_price['dif'].ewm(span=9, min_periods=0, adjust=False,
+                                                               ignore_na=False).mean()  # 慢速線
 
         self.stock_price['fs_dif'] = self.stock_price['dif'] - self.stock_price['macd']
         self.stock_price['signal'] = self.stock_price['fs_dif'].map(lambda x: 1 if x > 0 else -1)
@@ -34,7 +38,7 @@ class MACDCROSSOVER:
         self.stock_price = self.stock_price.dropna()
         self.stock_price.index = range(len(self.stock_price))
 
-    def trade(self,date):
+    def trade(self, date):
         '''
         此區塊，可進行資料處理、做技術指標，寫自己的策略，
         寫你自己的策略, 必須 return : 1 (買) or -1 (賣) or 0 (不操作)
@@ -43,7 +47,7 @@ class MACDCROSSOVER:
         date : 昨天時間
         用昨天的資料，計算技術指標，判斷今天買/賣
         '''
-        value = self.stock_price[ self.stock_price['date'] == date ]
+        value = self.stock_price[self.stock_price['date'] == date]
         if len(value) == 0:
             return 0
 
@@ -57,17 +61,17 @@ class MACDCROSSOVER:
         else:
             return 0
 
-def test():
 
+def test():
     stock_id = '0056'
     date = '2015-01-01'
 
     url = 'http://finmindapi.servebeer.com/api/data'
-    form_data = {'dataset':'TaiwanStockPrice',
-                 'stock_id':stock_id,
-                 'date':date}
+    form_data = {'dataset': 'TaiwanStockPrice',
+                 'stock_id': stock_id,
+                 'date': date}
 
-    res = requests.post(url,verify = True,data = form_data)
+    res = requests.post(url, verify=True, data=form_data)
 
     temp = res.json()
     stock_price = pd.DataFrame(temp['data'])

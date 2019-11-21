@@ -1,12 +1,13 @@
 import pandas as pd
 import requests
 
+
 # class name，必須跟檔案名一致，例如 class demo，檔名也是 demo.py
 class demo:
     def __init__(self,
                  stock_price,
-                 **kwargs,):
-        #-------------------------------------------------------------------    
+                 **kwargs, ):
+        # -------------------------------------------------------------------
         # 此區塊請勿更動
         stock_price = stock_price.sort_values('date')
         # 股價
@@ -18,9 +19,9 @@ class demo:
         # 外資持股
         self.Shareholding = kwargs.get("Shareholding", pd.DataFrame())
         # 此區塊請勿更動
-        #-------------------------------------------------------------------
-    
-    def trade(self,date):
+        # -------------------------------------------------------------------
+
+    def trade(self, date):
         ''' 
         此區塊，可進行資料處理、做技術指標，寫自己的策略，
         寫你自己的策略, 必須 return : 1 (買) or -1 (賣) or 0 (不操作)
@@ -28,9 +29,9 @@ class demo:
         '''
         # example
         from random import randint
-        
-        x = randint(1,10)
-        x = x%3
+
+        x = randint(1, 10)
+        x = x % 3
         if x == 1:
             return 1
         elif x == 2:
@@ -45,60 +46,52 @@ def test():
     '''
     stock_id = '2330'
     date = '2018-01-01'
-    
+
     url = 'http://finmindapi.servebeer.com/api/data'
-    form_data = {'dataset':'TaiwanStockPrice',
-                 'stock_id':stock_id,
-                 'date':date}
-    
-    res = requests.post(url,verify = True,data = form_data)
-        
+    form_data = {'dataset': 'TaiwanStockPrice',
+                 'stock_id': stock_id,
+                 'date': date}
+
+    res = requests.post(url, verify=True, data=form_data)
+
     temp = res.json()
     stock_price = pd.DataFrame(temp['data'])
 
-            
-    form_data = {'dataset':'TaiwanStockMarginPurchaseShortSale',
-    	   'stock_id':stock_id,
-    	   'date':date}
+    form_data = {'dataset': 'TaiwanStockMarginPurchaseShortSale',
+                 'stock_id': stock_id,
+                 'date': date}
     res = requests.post(
-          url,verify = True,
-          data = form_data)
-    
+        url, verify=True,
+        data=form_data)
+
     temp = res.json()
     MarginPurchaseShortSale = pd.DataFrame(temp['data'])
 
-    
-    form_data = {'dataset':'InstitutionalInvestorsBuySell',
-  	   'stock_id':stock_id,
-  	   'date':date}
+    form_data = {'dataset': 'InstitutionalInvestorsBuySell',
+                 'stock_id': stock_id,
+                 'date': date}
     res = requests.post(
-        url,verify = True,
-        data = form_data)
+        url, verify=True,
+        data=form_data)
 
     temp = res.json()
     InstitutionalInvestorsBuySell = pd.DataFrame(temp['data'])
 
-
-    form_data = {'dataset':'Shareholding',
-  	   'stock_id':stock_id,
-  	   'date':date}
+    form_data = {'dataset': 'Shareholding',
+                 'stock_id': stock_id,
+                 'date': date}
     res = requests.post(
-        url,verify = True,
-        data = form_data)
+        url, verify=True,
+        data=form_data)
 
     temp = res.json()
     Shareholding = pd.DataFrame(temp['data'])
 
-    
     self = demo(
-            stock_price = stock_price,
-            MarginPurchaseShortSale = MarginPurchaseShortSale,
-            InstitutionalInvestorsBuySell = InstitutionalInvestorsBuySell,
-            Shareholding = Shareholding,)
-    
+        stock_price=stock_price,
+        MarginPurchaseShortSale=MarginPurchaseShortSale,
+        InstitutionalInvestorsBuySell=InstitutionalInvestorsBuySell,
+        Shareholding=Shareholding, )
+
     self.trade('2019-05-03')
     self.trade('2019-05-05')
-    
-    
-
-
